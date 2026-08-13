@@ -2,155 +2,608 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import signature from "../../assets/signature/RohitSignature.svg";
 
-const SEGMENTS = 10; // jitne zyada segments, utna smooth "letter by letter" feel
+const SEGMENTS = 14;
 
 export default function Loader({ finish }) {
-    const wrapperRef = useRef(null);
-    const imgRef = useRef(null);
-    const segmentRefs = useRef([]);
-    const penTipRef = useRef(null);
-    const glowRef = useRef(null);
-    const curtainLeftRef = useRef(null);
-    const curtainRightRef = useRef(null);
+  const wrapperRef = useRef(null);
+  const signatureRef = useRef(null);
+  const segmentsRef = useRef([]);
+  const penRef = useRef(null);
+  const glowRef = useRef(null);
+  const progressRef = useRef(null);
+  const percentRef = useRef(null);
+  const bgTextRef = useRef(null);
 
-    useEffect(() => {
-        const tl = gsap.timeline();
-        const segments = segmentRefs.current;
+  useEffect(() => {
+    const tl = gsap.timeline();
+    const segments = segmentsRef.current;
 
-        gsap.set(imgRef.current, { opacity: 1 });
-        gsap.set(segments, { scaleX: 1 });
-        gsap.set(glowRef.current, { opacity: 0, scale: 0.5 });
-        gsap.set(penTipRef.current, { opacity: 0, left: "0%" });
-        gsap.set(curtainLeftRef.current, { xPercent: 0 });
-        gsap.set(curtainRightRef.current, { xPercent: 0 });
+    gsap.set(signatureRef.current, {
+      opacity: 1,
+      scale: 1,
+    });
 
-        // 0) Curtain open
-        tl.to(curtainLeftRef.current, { xPercent: -100, duration: 1, ease: "power3.inOut" });
-        tl.to(curtainRightRef.current, { xPercent: 100, duration: 1, ease: "power3.inOut" }, "<");
+    gsap.set(segments, {
+      scaleX: 1,
+    });
 
-        // 1) Glow breathe in
-        tl.to(glowRef.current, { opacity: 0.5, scale: 1, duration: 1, ease: "power2.out" }, "-=0.5");
+    gsap.set(penRef.current, {
+      opacity: 0,
+      left: "0%",
+    });
 
-        // 2) Pen tip fade in at start
-        tl.to(penTipRef.current, { opacity: 1, duration: 0.3 });
+    gsap.set(glowRef.current, {
+      opacity: 0,
+      scale: 0.6,
+    });
 
-        // 3) Har segment ek ek karke "likha" jaata hai (right se scaleX 0 karte hue reveal)
-        segments.forEach((seg, i) => {
-            tl.to(
-                seg,
-                {
-                    scaleX: 0,
-                    duration: 1.6 / SEGMENTS,
-                    ease: "power1.inOut",
-                },
-                i === 0 ? undefined : "-=0.02" // thoda overlap, smooth continuous feel
-            );
-            // Pen tip us segment ki position tak move ho
-            tl.to(
-                penTipRef.current,
-                {
-                    left: `${((i + 1) / SEGMENTS) * 100}%`,
-                    duration: 1.6 / SEGMENTS,
-                    ease: "power1.inOut",
-                },
-                "<"
-            );
-        });
+    gsap.set(progressRef.current, {
+      scaleX: 0,
+      transformOrigin: "left center",
+    });
 
-        // 4) Likhna complete hone ke baad pen tip fade out
-        tl.to(penTipRef.current, { opacity: 0, duration: 0.3 });
+    gsap.set(percentRef.current, {
+      textContent: "0",
+    });
 
-        // 5) Ink-set glow pulse
-        tl.to(glowRef.current, { opacity: 0.9, scale: 1.15, duration: 0.6, ease: "power2.out" });
+    gsap.set(bgTextRef.current, {
+      opacity: 0,
+      scale: 0.9,
+    });
 
-        // 6) Settle pulse
-        tl.to(imgRef.current, {
-            scale: 1.04,
-            duration: 0.35,
-            ease: "power2.out",
-            yoyo: true,
-            repeat: 1,
-        });
+    /* ================================
+       BACKGROUND TEXT
+    ================================= */
 
-        // 7) Hold
-        tl.to({}, { duration: 0.6 });
+    tl.to(bgTextRef.current, {
+      opacity: 1,
+      scale: 1,
+      duration: 1.2,
+      ease: "power3.out",
+    });
 
-        // 8) Exit
-        tl.to(wrapperRef.current, {
-            opacity: 0,
-            y: -20,
-            scale: 1.08,
-            duration: 0.9,
-            ease: "power2.in",
-        });
-        tl.to(glowRef.current, { opacity: 0, scale: 1.4, duration: 0.9, ease: "power2.in" }, "<");
+    /* ================================
+       SIGNATURE GLOW
+    ================================= */
 
-        tl.call(finish);
+    tl.to(
+      glowRef.current,
+      {
+        opacity: 0.35,
+        scale: 1,
+        duration: 1,
+        ease: "power2.out",
+      },
+      "-=0.7"
+    );
 
-        return () => tl.kill();
-    }, [finish]);
+    /* ================================
+       PEN START
+    ================================= */
 
-    return (
-        <div
-            className="
-            fixed inset-0 bg-pink-500
-            flex items-center justify-center
-            overflow-hidden z-[999999]
-            "
+    tl.to(penRef.current, {
+      opacity: 1,
+      duration: 0.25,
+    });
+
+    /* ================================
+       SIGNATURE REVEAL
+    ================================= */
+
+    segments.forEach((segment, index) => {
+      const duration = 1.8 / SEGMENTS;
+
+      tl.to(
+        segment,
+        {
+          scaleX: 0,
+          duration,
+          ease: "power1.inOut",
+        },
+        index === 0 ? undefined : "-=0.025"
+      );
+
+      tl.to(
+        penRef.current,
+        {
+          left: `${((index + 1) / SEGMENTS) * 100}%`,
+          duration,
+          ease: "power1.inOut",
+        },
+        "<"
+      );
+
+      tl.to(
+        progressRef.current,
+        {
+          scaleX: (index + 1) / SEGMENTS,
+          duration,
+          ease: "none",
+        },
+        "<"
+      );
+
+      tl.to(
+        percentRef.current,
+        {
+          textContent: Math.round(
+            ((index + 1) / SEGMENTS) * 100
+          ),
+          duration,
+          snap: {
+            textContent: 1,
+          },
+          ease: "none",
+        },
+        "<"
+      );
+    });
+
+    /* ================================
+       PEN EXIT
+    ================================= */
+
+    tl.to(penRef.current, {
+      opacity: 0,
+      scale: 0,
+      duration: 0.25,
+    });
+
+    /* ================================
+       FINAL GLOW
+    ================================= */
+
+    tl.to(glowRef.current, {
+      opacity: 0.75,
+      scale: 1.15,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+
+    tl.to(
+      signatureRef.current,
+      {
+        scale: 1.035,
+        duration: 0.35,
+        ease: "power2.out",
+        yoyo: true,
+        repeat: 1,
+      },
+      "<"
+    );
+
+    /* ================================
+       HOLD
+    ================================= */
+
+    tl.to({}, {
+      duration: 0.7,
+    });
+
+    /* ================================
+       EXIT
+    ================================= */
+
+    tl.to(
+      wrapperRef.current,
+      {
+        opacity: 0,
+        scale: 1.06,
+        y: -15,
+        duration: 0.75,
+        ease: "power3.in",
+      }
+    );
+
+    tl.to(
+      bgTextRef.current,
+      {
+        opacity: 0,
+        scale: 1.08,
+        duration: 0.7,
+        ease: "power2.in",
+      },
+      "<"
+    );
+
+    tl.to(
+      glowRef.current,
+      {
+        opacity: 0,
+        scale: 1.5,
+        duration: 0.8,
+        ease: "power2.in",
+      },
+      "<"
+    );
+
+    tl.call(() => {
+      finish?.();
+    });
+
+    return () => tl.kill();
+  }, [finish]);
+
+  return (
+    <div
+      className="
+        fixed
+        inset-0
+        z-[999999]
+        overflow-hidden
+        flex
+        items-center
+        justify-center
+        bg-[#080808]
+        text-white
+      "
+    >
+
+      {/* ========================================
+          HUGE BACKGROUND R
+      ======================================== */}
+
+      <div
+        ref={bgTextRef}
+        className="
+          absolute
+          left-1/2
+          top-1/2
+          -translate-x-1/2
+          -translate-y-1/2
+          pointer-events-none
+          select-none
+        "
+      >
+
+        <span
+          className="
+            font-['Space_Grotesk']
+            font-bold
+            text-[420px]
+            sm:text-[600px]
+            md:text-[750px]
+            leading-none
+            tracking-[-60px]
+            text-white/[0.018]
+          "
         >
-            {/* Curtain panels */}
-            <div ref={curtainLeftRef} className="absolute top-0 left-0 w-1/2 h-full bg-black z-[999998]" />
-            <div ref={curtainRightRef} className="absolute top-0 right-0 w-1/2 h-full bg-black z-[999998]" />
+          R
+        </span>
 
-            {/* Glow behind signature */}
+      </div>
+
+
+      {/* ========================================
+          TOP LEFT
+      ======================================== */}
+
+      <div
+        className="
+          absolute
+          top-8
+          left-7
+          sm:top-10
+          sm:left-12
+        "
+      >
+
+        <p
+          className="
+            font-['Space_Grotesk']
+            text-[8px]
+            uppercase
+            tracking-[5px]
+            text-white/30
+          "
+        >
+          Rohit Singh
+        </p>
+
+        <div
+          className="
+            mt-2
+            w-8
+            h-px
+            bg-white/20
+          "
+        />
+
+      </div>
+
+
+      {/* ========================================
+          TOP RIGHT
+      ======================================== */}
+
+      <div
+        className="
+          absolute
+          top-8
+          right-7
+          sm:top-10
+          sm:right-12
+          flex
+          items-center
+          gap-3
+        "
+      >
+
+        <span
+          className="
+            w-1.5
+            h-1.5
+            rounded-full
+            bg-white/60
+          "
+        />
+
+        <span
+          className="
+            font-['Space_Grotesk']
+            text-[8px]
+            uppercase
+            tracking-[4px]
+            text-white/30
+          "
+        >
+          Portfolio
+        </span>
+
+      </div>
+
+
+      {/* ========================================
+          CENTER
+      ======================================== */}
+
+      <div
+        ref={wrapperRef}
+        className="
+          relative
+          z-20
+          w-[300px]
+          sm:w-[480px]
+          md:w-[600px]
+          lg:w-[700px]
+        "
+      >
+
+        {/* GLOW */}
+
+        <div
+          ref={glowRef}
+          className="
+            absolute
+            left-1/2
+            top-1/2
+            -translate-x-1/2
+            -translate-y-1/2
+            w-[75%]
+            h-[70%]
+            rounded-full
+            bg-white/10
+            blur-[100px]
+            pointer-events-none
+          "
+        />
+
+
+        {/* SIGNATURE */}
+
+        <img
+          ref={signatureRef}
+          src={signature}
+          alt="Rohit Singh Signature"
+          draggable="false"
+          className="
+            relative
+            z-10
+            block
+            w-full
+            object-contain
+            select-none
+            pointer-events-none
+          "
+          style={{
+            filter: `
+              brightness(0)
+              saturate(100%)
+              invert(95%)
+              sepia(5%)
+              saturate(100%)
+              hue-rotate(0deg)
+              brightness(105%)
+              contrast(100%)
+              drop-shadow(0 0 10px rgba(255,255,255,0.25))
+            `,
+          }}
+        />
+
+
+        {/* SEGMENTS */}
+
+        <div
+          className="
+            absolute
+            inset-0
+            z-20
+            flex
+          "
+        >
+
+          {Array.from({
+            length: SEGMENTS,
+          }).map((_, index) => (
+
             <div
-                ref={glowRef}
-                className="absolute w-[700px] h-[300px] bg-yellow-300/35 blur-[150px] rounded-full -z-10"
+              key={index}
+              ref={(element) => {
+                segmentsRef.current[index] = element;
+              }}
+              className="
+                h-full
+                bg-[#080808]
+              "
+              style={{
+                width: `${100 / SEGMENTS}%`,
+                transformOrigin: "right center",
+              }}
             />
 
-            {/* Signature with segmented reveal */}
-            <div
-                ref={wrapperRef}
-                className="relative w-[520px] md:w-[650px] z-10"
-            >
-                <img
-                    ref={imgRef}
-                    src={signature}
-                    alt="Rohit Signature"
-                    className="w-full object-contain select-none pointer-events-none block"
-                    style={{
-                        filter: `
-                            brightness(0) saturate(100%) invert(82%) sepia(94%)
-                            saturate(1400%) hue-rotate(358deg) brightness(105%) contrast(102%)
-                            drop-shadow(0 0 20px #FFD700) drop-shadow(0 0 40px #FFD700)
-                        `,
-                    }}
-                />
+          ))}
 
-                {/* Segments — har ek image ke upar background-color block, right-anchored scaleX se reveal hota hai */}
-                <div className="absolute inset-0 flex">
-                    {Array.from({ length: SEGMENTS }).map((_, i) => (
-                        <div
-                            key={i}
-                            ref={(el) => (segmentRefs.current[i] = el)}
-                            className="h-full bg-pink-500"
-                            style={{
-                                width: `${100 / SEGMENTS}%`,
-                                transformOrigin: "right center",
-                            }}
-                        />
-                    ))}
-                </div>
-
-                {/* Pen tip glowing dot — likhte hue aage aage chalta hai */}
-                <div
-                    ref={penTipRef}
-                    className="absolute top-1/2 w-3 h-3 rounded-full bg-yellow-200 -translate-y-1/2 -translate-x-1/2 pointer-events-none"
-                    style={{
-                        boxShadow: "0 0 12px 4px rgba(255,215,0,0.9)",
-                    }}
-                />
-            </div>
         </div>
-    );
+
+
+        {/* PEN */}
+
+        <div
+          ref={penRef}
+          className="
+            absolute
+            z-30
+            top-1/2
+            left-0
+            w-2.5
+            h-2.5
+            rounded-full
+            bg-white
+            -translate-x-1/2
+            -translate-y-1/2
+            pointer-events-none
+          "
+          style={{
+            boxShadow: `
+              0 0 8px rgba(255,255,255,0.9),
+              0 0 22px rgba(255,255,255,0.45)
+            `,
+          }}
+        />
+
+      </div>
+
+
+      {/* ========================================
+          BOTTOM LEFT
+      ======================================== */}
+
+      <div
+        className="
+          absolute
+          bottom-8
+          left-7
+          sm:bottom-10
+          sm:left-12
+        "
+      >
+
+        <p
+          className="
+            font-['Space_Grotesk']
+            text-[8px]
+            uppercase
+            tracking-[3px]
+            text-white/20
+          "
+        >
+          Data Scientist
+        </p>
+
+        <p
+          className="
+            mt-1
+            font-['Space_Grotesk']
+            text-[8px]
+            uppercase
+            tracking-[2px]
+            text-white/10
+          "
+        >
+          AI • ML • Development
+        </p>
+
+      </div>
+
+
+      {/* ========================================
+          BOTTOM RIGHT
+      ======================================== */}
+
+      <div
+        className="
+          absolute
+          bottom-8
+          right-7
+          sm:bottom-10
+          sm:right-12
+          flex
+          flex-col
+          items-end
+          gap-3
+        "
+      >
+
+        <span
+          ref={percentRef}
+          className="
+            font-['Space_Grotesk']
+            text-[10px]
+            tracking-[3px]
+            text-white/40
+          "
+        >
+          0
+        </span>
+
+        <div
+          className="
+            w-24
+            sm:w-32
+            h-px
+            bg-white/10
+            overflow-hidden
+          "
+        >
+
+          <div
+            ref={progressRef}
+            className="
+              w-full
+              h-full
+              bg-white/60
+            "
+          />
+
+        </div>
+
+      </div>
+
+
+      {/* ========================================
+          CENTER DECORATIVE DOTS
+      ======================================== */}
+
+      <div
+        className="
+          absolute
+          left-1/2
+          top-[18%]
+          -translate-x-1/2
+          flex
+          items-center
+          gap-2
+        "
+      >
+
+        <span className="w-1 h-1 rounded-full bg-white/20" />
+
+        <span className="w-1 h-1 rounded-full bg-white/10" />
+
+        <span className="w-1 h-1 rounded-full bg-white/5" />
+
+      </div>
+
+    </div>
+  );
 }

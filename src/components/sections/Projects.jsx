@@ -1,250 +1,757 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { FiArrowUpRight } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 import Background from "../ui/Background";
 import { projects } from "../../data/projects";
 
 export default function Projects() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    return (
-        <section
-            id="projects"
-            className="relative py-32 overflow-hidden bg-[#070707]"
-        >
-            <Background />
+  const [activeProject, setActiveProject] = useState(null);
 
-            {/* Background Glow */}
+  const [mousePosition, setMousePosition] = useState({
+    x: 0,
+    y: 0,
+  });
 
-            <div className="absolute top-20 left-20 w-72 h-72 bg-cyan-500/10 blur-[140px] rounded-full" />
-            <div className="absolute bottom-20 right-20 w-72 h-72 bg-blue-500/10 blur-[140px] rounded-full" />
+  /* ==========================================
+      BACK TO PROJECTS SCROLL
+  ========================================== */
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6">
+  useEffect(() => {
+    if (window.location.hash === "#projects") {
+      setTimeout(() => {
+        document
+          .getElementById("projects")
+          ?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+      }, 100);
+    }
+  }, []);
 
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    transition={{ duration: 0.6 }}
-                    viewport={{ once: true }}
-                    className="uppercase tracking-[8px] text-cyan-400"
-                >
-                    Featured Work
-                </motion.p>
+  /* ==========================================
+      MOUSE MOVE
+  ========================================== */
 
-                <motion.h2
-                    initial={{ opacity: 0, y: 80 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    viewport={{ once: true }}
-                    className="mt-5 text-4xl md:text-6xl font-bold"
-                >
-                    Selected Projects
-                </motion.h2>
+  const handleMouseMove = (e) => {
+    setMousePosition({
+      x: e.clientX,
+      y: e.clientY,
+    });
+  };
 
-                <motion.div
-                    initial={{ width: 0 }}
-                    whileInView={{ width: 120 }}
-                    transition={{ duration: 1 }}
-                    className="h-1 bg-cyan-400 mt-6"
-                />
+  /* ==========================================
+      OPEN PROJECT
+  ========================================== */
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-20">
-                    {projects.map((project, index) => (
-                        <motion.div
-                            key={project.id}
-                            initial={{ opacity: 0, y: 80 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{
-                                duration: 0.7,
-                                delay: index * 0.15,
-                            }}
-                            whileHover={{
-                                y: -12,
-                            }}
-                            className="
-      group
-      relative
-      overflow-hidden
-      rounded-[28px]
-      border
-      border-white/10
-      bg-white/5
-      backdrop-blur-xl
-      transition-all
-      duration-500
-    "
-                        >
+  const handleProjectClick = (project) => {
+    navigate(`/projects/${project.id}`);
+  };
 
-                            {/* Image */}
+  return (
+    <section
+      id="projects"
+      className="
+        relative
+        min-h-screen
+        overflow-hidden
+        bg-[#070707]
+        text-white
+        py-28
+        sm:py-36
+        lg:py-44
+      "
+      onMouseMove={handleMouseMove}
+    >
 
-                            <div className="relative overflow-hidden">
+      {/* ==========================================
+          BACKGROUND
+      ========================================== */}
 
-                                <motion.img
-                                    whileHover={{
-                                        scale: 1.08,
-                                    }}
-                                    transition={{
-                                        duration: 0.5,
-                                    }}
-                                    src={project.image}
-                                    alt={project.title}
-                                    className="w-full h-[260px] object-cover"
-                                />
+      <Background />
 
-                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-                                {/* Category */}
+      {/* ==========================================
+          GRID
+      ========================================== */}
 
-                                <div className="absolute top-5 left-5">
+      <div
+        className="
+          absolute
+          inset-0
+          pointer-events-none
+          opacity-[0.012]
+          bg-[linear-gradient(rgba(255,255,255,.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.5)_1px,transparent_1px)]
+          bg-[size:100px_100px]
+        "
+      />
 
-                                    <span className="px-4 py-2 rounded-full bg-black/50 backdrop-blur-xl text-xs uppercase tracking-widest">
 
-                                        {project.category}
+      {/* ==========================================
+          VIGNETTE
+      ========================================== */}
 
-                                    </span>
+      <div
+        className="
+          absolute
+          inset-0
+          pointer-events-none
+          bg-[radial-gradient(circle_at_center,transparent_20%,#070707_92%)]
+        "
+      />
 
-                                </div>
 
-                                {/* Year */}
+      {/* ==========================================
+          FLOATING CURSOR IMAGE
+      ========================================== */}
 
-                                <div className="absolute top-5 right-5">
-
-                                    <span className="text-white/50 font-semibold">
-
-                                        {project.year}
-
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                            {/* Content */}
-
-                            <div className="p-7">
-
-                                <motion.h3
-                                    whileHover={{
-                                        x: 5,
-                                    }}
-                                    className="text-3xl font-bold"
-                                >
-                                    {project.title}
-                                </motion.h3>
-
-                                <p className="mt-5 text-gray-400 leading-7">
-                                    {project.short}
-                                </p>
-
-                                {/* Tech */}
-
-                                <div className="flex flex-wrap gap-2 mt-6">
-
-                                    {project.tech.map((item) => (
-
-                                        <motion.span
-                                            key={item}
-                                            whileHover={{
-                                                y: -3,
-                                            }}
-                                            className="
-              px-3
-              py-2
-              rounded-full
+      <AnimatePresence>
+        {activeProject && (
+          <motion.div
+            initial={{
+              opacity: 0,
+              scale: 0.8,
+              rotate: -5,
+            }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              rotate: 0,
+            }}
+            exit={{
+              opacity: 0,
+              scale: 0.8,
+            }}
+            transition={{
+              duration: 0.25,
+            }}
+            className="
+              fixed
+              z-50
+              hidden
+              lg:block
+              pointer-events-none
+              w-[330px]
+              h-[220px]
+              overflow-hidden
+              rounded-[22px]
               border
               border-white/10
-              bg-white/5
-              text-sm
+              bg-[#0b0b0d]
+              shadow-[0_30px_100px_rgba(0,0,0,.7)]
             "
-                                        >
-                                            {item}
-                                        </motion.span>
+            style={{
+              left: mousePosition.x + 20,
+              top: mousePosition.y - 110,
+            }}
+          >
 
-                                    ))}
+            <motion.img
+              key={activeProject.image}
+              src={activeProject.image}
+              alt={activeProject.title}
+              initial={{
+                scale: 1.15,
+              }}
+              animate={{
+                scale: 1,
+              }}
+              transition={{
+                duration: 0.5,
+              }}
+              className="
+                w-full
+                h-full
+                object-cover
+              "
+            />
 
-                                </div>
-                                {/* View Project Button */}
+            {/* Image Overlay */}
 
-                                <motion.button
-                                    whileHover={{
-                                        scale: 1.03,
-                                        y: -2,
-                                    }}
-                                    whileTap={{
-                                        scale: 0.96,
-                                    }}
-                                    onClick={() => navigate(`/project/${project.id}`)}
-                                    className="
-          w-full
-          mt-8
-          bg-cyan-400
-          hover:bg-cyan-300
-          text-black
-          rounded-xl
-          py-4
-          font-semibold
-          flex
-          justify-center
-          items-center
-          gap-3
-          transition-all
-          duration-300
-          shadow-lg
-          shadow-cyan-500/20
-        "
-                                >
-                                    View Project
+            <div
+              className="
+                absolute
+                inset-0
+                bg-gradient-to-t
+                from-black/70
+                via-transparent
+                to-transparent
+              "
+            />
 
-                                    <motion.div
-                                        whileHover={{ x: 5 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        <FiArrowUpRight size={20} />
-                                    </motion.div>
-                                </motion.button>
+            {/* Image Info */}
 
-                            </div>
+            <div
+              className="
+                absolute
+                left-5
+                right-5
+                bottom-4
+                flex
+                items-center
+                justify-between
+                font-['Space_Grotesk']
+              "
+            >
 
-                            {/* Animated Border */}
+              <span
+                className="
+                  text-[8px]
+                  uppercase
+                  tracking-[2px]
+                  text-white/60
+                "
+              >
+                {activeProject.category}
+              </span>
 
-                            <motion.div
-                                className="
-        absolute
-        inset-0
-        rounded-[28px]
-        border
-        border-cyan-400/0
-        pointer-events-none
-        group-hover:border-cyan-400/40
-        transition-all
-        duration-500
-      "
-                            />
-
-                            {/* Glow */}
-
-                            <div
-                                className="
-        absolute
-        -inset-1
-        opacity-0
-        group-hover:opacity-100
-        transition-all
-        duration-500
-        bg-cyan-400/10
-        blur-3xl
-        -z-10
-      "
-                            />
-
-                        </motion.div>
-                    ))}
-
-                </div>
+              <span
+                className="
+                  text-[8px]
+                  uppercase
+                  tracking-[2px]
+                  text-white/30
+                "
+              >
+                {activeProject.year}
+              </span>
 
             </div>
 
-        </section>
-    );
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+
+      {/* ==========================================
+          MAIN
+      ========================================== */}
+
+      <div
+        className="
+          relative
+          z-10
+          max-w-7xl
+          mx-auto
+          px-6
+          sm:px-8
+          lg:px-12
+        "
+      >
+
+        {/* ==========================================
+            HEADER
+        ========================================== */}
+
+        <div
+          className="
+            grid
+            lg:grid-cols-[1fr_320px]
+            gap-10
+            items-end
+          "
+        >
+
+          <div>
+
+            {/* Selected Work */}
+
+            <motion.div
+              initial={{
+                opacity: 0,
+                x: -20,
+              }}
+              whileInView={{
+                opacity: 1,
+                x: 0,
+              }}
+              viewport={{
+                once: true,
+              }}
+              transition={{
+                duration: 0.6,
+              }}
+              className="
+                flex
+                items-center
+                gap-3
+                font-['Space_Grotesk']
+                text-[9px]
+                uppercase
+                tracking-[4px]
+                text-violet-400
+              "
+            >
+
+              <span
+                className="
+                  w-8
+                  h-px
+                  bg-violet-400
+                "
+              />
+
+              Selected Work
+
+            </motion.div>
+
+
+            {/* Heading */}
+
+            <motion.h2
+              initial={{
+                opacity: 0,
+                y: 50,
+              }}
+              whileInView={{
+                opacity: 1,
+                y: 0,
+              }}
+              viewport={{
+                once: true,
+              }}
+              transition={{
+                duration: 0.9,
+              }}
+              className="
+                mt-6
+                font-['Space_Grotesk']
+                text-5xl
+                sm:text-7xl
+                md:text-8xl
+                lg:text-[110px]
+                font-bold
+                leading-[0.82]
+                tracking-[-7px]
+              "
+            >
+
+              WORK
+
+              <span className="text-white/20">
+                {" "}LAB.
+              </span>
+
+            </motion.h2>
+
+          </div>
+
+
+          {/* Description */}
+
+          <motion.p
+            initial={{
+              opacity: 0,
+              y: 20,
+            }}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+            }}
+            viewport={{
+              once: true,
+            }}
+            transition={{
+              delay: 0.2,
+            }}
+            className="
+              max-w-sm
+              font-['Space_Grotesk']
+              text-sm
+              leading-7
+              text-gray-600
+            "
+          >
+            A collection of experiments, products and
+            intelligent systems built around data,
+            technology and curiosity.
+          </motion.p>
+
+        </div>
+
+
+        {/* ==========================================
+            HEADER LINE
+        ========================================== */}
+
+        <div
+          className="
+            mt-12
+            h-px
+            bg-white/[0.07]
+          "
+        />
+
+
+        {/* ==========================================
+            PROJECT LIST
+        ========================================== */}
+
+        <div className="mt-8">
+
+          {projects.map((project, index) => (
+
+            <motion.div
+              key={project.id}
+
+              initial={{
+                opacity: 0,
+                y: 25,
+              }}
+
+              whileInView={{
+                opacity: 1,
+                y: 0,
+              }}
+
+              viewport={{
+                once: true,
+              }}
+
+              transition={{
+                duration: 0.6,
+                delay: index * 0.05,
+              }}
+
+              onMouseEnter={() => setActiveProject(project)}
+
+              onMouseLeave={() => setActiveProject(null)}
+
+              onClick={() => handleProjectClick(project)}
+
+              className="
+                group
+                relative
+                cursor-pointer
+                border-b
+                border-white/[0.06]
+              "
+            >
+
+              <div
+                className="
+                  relative
+                  py-8
+                  sm:py-10
+                  lg:py-12
+                  flex
+                  items-center
+                  gap-5
+                  sm:gap-8
+                  lg:gap-10
+                "
+              >
+
+                {/* ==================================
+                    NUMBER
+                ================================== */}
+
+                <div
+                  className="
+                    w-8
+                    sm:w-12
+                    shrink-0
+                    font-['Space_Grotesk']
+                    text-[9px]
+                    sm:text-[10px]
+                    uppercase
+                    tracking-[2px]
+                    text-gray-700
+                    group-hover:text-violet-400
+                    transition-colors
+                  "
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+
+
+                {/* ==================================
+                    TITLE
+                ================================== */}
+
+                <div className="flex-1 min-w-0">
+
+                  <h3
+                    className="
+                      font-['Space_Grotesk']
+                      text-2xl
+                      sm:text-4xl
+                      md:text-5xl
+                      lg:text-6xl
+                      font-semibold
+                      tracking-[-2px]
+                      truncate
+                      text-gray-300
+                      group-hover:text-white
+                      group-hover:translate-x-2
+                      transition-all
+                      duration-500
+                    "
+                  >
+                    {project.title}
+                  </h3>
+
+
+                  {/* ==================================
+                      META
+                  ================================== */}
+
+                  <div
+                    className="
+                      mt-3
+                      flex
+                      flex-wrap
+                      items-center
+                      gap-x-4
+                      gap-y-2
+                      font-['Space_Grotesk']
+                      text-[7px]
+                      sm:text-[8px]
+                      uppercase
+                      tracking-[2px]
+                      text-gray-700
+                    "
+                  >
+
+                    <span>
+                      {project.category}
+                    </span>
+
+                    <span className="text-white/10">
+                      /
+                    </span>
+
+                    <span>
+                      {project.year}
+                    </span>
+
+                    <span className="hidden sm:block text-white/10">
+                      /
+                    </span>
+
+                    <span className="hidden sm:block">
+                      {project.tech
+                        .slice(0, 3)
+                        .join(" · ")}
+                    </span>
+
+                  </div>
+
+                </div>
+
+
+                {/* ==================================
+                    ARROW
+                ================================== */}
+
+                <motion.div
+                  whileHover={{
+                    rotate: 45,
+                  }}
+                  className="
+                    shrink-0
+                    w-10
+                    h-10
+                    sm:w-12
+                    sm:h-12
+                    rounded-full
+                    border
+                    border-white/[0.07]
+                    flex
+                    items-center
+                    justify-center
+                    text-gray-600
+                    group-hover:border-violet-400/40
+                    group-hover:bg-violet-400
+                    group-hover:text-black
+                    transition-all
+                    duration-400
+                  "
+                >
+
+                  <FiArrowUpRight size={18} />
+
+                </motion.div>
+
+              </div>
+
+
+              {/* ==================================
+                  MOBILE IMAGE
+              ================================== */}
+
+              <div
+                className="
+                  lg:hidden
+                  h-0
+                  overflow-hidden
+                  group-hover:h-[210px]
+                  transition-all
+                  duration-500
+                "
+              >
+
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="
+                    w-full
+                    h-full
+                    object-cover
+                    rounded-[20px]
+                  "
+                />
+
+              </div>
+
+            </motion.div>
+
+          ))}
+
+        </div>
+
+
+        {/* ==========================================
+            BOTTOM AREA
+        ========================================== */}
+
+        <motion.div
+          initial={{
+            opacity: 0,
+          }}
+          whileInView={{
+            opacity: 1,
+          }}
+          viewport={{
+            once: true,
+          }}
+          transition={{
+            duration: 0.8,
+          }}
+          className="
+            mt-20
+            flex
+            flex-col
+            sm:flex-row
+            sm:items-center
+            sm:justify-between
+            gap-6
+          "
+        >
+
+          <div>
+
+            <div
+              className="
+                font-['Space_Grotesk']
+                text-[8px]
+                uppercase
+                tracking-[3px]
+                text-gray-700
+              "
+            >
+              More experiments coming
+            </div>
+
+            <div
+              className="
+                mt-2
+                font-['Space_Grotesk']
+                text-xl
+                sm:text-2xl
+                font-semibold
+              "
+            >
+              Always building.
+            </div>
+
+          </div>
+
+
+          <motion.button
+            whileHover={{
+              y: -4,
+            }}
+            whileTap={{
+              scale: 0.97,
+            }}
+            onClick={() =>
+              document
+                .getElementById("contact")
+                ?.scrollIntoView({
+                  behavior: "smooth",
+                })
+            }
+            className="
+              group
+              flex
+              items-center
+              gap-3
+              w-fit
+              px-6
+              py-3.5
+              rounded-full
+              bg-white
+              text-black
+              font-['Space_Grotesk']
+              text-xs
+              font-semibold
+            "
+          >
+
+            Let's Work Together
+
+            <FiArrowUpRight
+              className="
+                transition-transform
+                group-hover:rotate-45
+              "
+            />
+
+          </motion.button>
+
+        </motion.div>
+
+
+        {/* ==========================================
+            FOOTER
+        ========================================== */}
+
+        <div
+          className="
+            mt-20
+            pt-7
+            border-t
+            border-white/[0.06]
+            flex
+            flex-col
+            sm:flex-row
+            justify-between
+            gap-3
+            font-['Space_Grotesk']
+            text-[8px]
+            uppercase
+            tracking-[3px]
+            text-gray-700
+          "
+        >
+
+          <span>
+            Data → Intelligence → Experience
+          </span>
+
+          <span>
+            Rohit Singh · 2026
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+  );
 }
