@@ -22,12 +22,14 @@ EMAIL_APP_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
 
 app = Flask(__name__)
 
-# Allow frontend / Vercel to access API
 CORS(
     app,
     resources={
         r"/api/*": {
-            "origins": "*"
+            "origins": [
+                "http://localhost:5173",
+                "https://rohit-singh-portfolio-six.vercel.app"
+            ]
         }
     }
 )
