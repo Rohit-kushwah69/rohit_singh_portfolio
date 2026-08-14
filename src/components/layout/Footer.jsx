@@ -17,17 +17,17 @@ const socials = [
   },
   {
     name: "LinkedIn",
-    href: "https://www.linkedin.com/",
+    href: "https://www.linkedin.com/in/rohit-kushwah-3512b0301/",
     icon: FiLinkedin,
   },
   {
     name: "Instagram",
-    href: "https://www.instagram.com/",
+    href: "https://www.instagram.com/therohitkushwah___",
     icon: FiInstagram,
   },
   {
     name: "Email",
-    href: "mailto:rk610744@email.com",
+    href: "https://mail.google.com/mail/?view=cm&fs=1&to=rk6109744@gmail.com",
     icon: FiMail,
   },
 ];
@@ -334,7 +334,9 @@ export default function Footer() {
           ========================================== */}
 
           <motion.a
-            href="mailto:your@email.com"
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=rk6109744@gmail.com"
+            target="_blank"
+            rel="noopener noreferrer"
             initial={{
               opacity: 0,
               scale: 0.95,
@@ -354,43 +356,43 @@ export default function Footer() {
               y: -5,
             }}
             className="
-              group
-              inline-flex
-              items-center
-              gap-4
-              mt-9
-              px-6
-              py-3
-              rounded-full
-              border
-              border-white/[0.09]
-              bg-white/[0.025]
-              backdrop-blur-xl
-              font-['Space_Grotesk']
-              text-sm
-              text-gray-300
-              hover:border-violet-400/30
-              hover:text-white
-              transition-all
-              duration-300
-            "
+    group
+    inline-flex
+    items-center
+    gap-4
+    mt-9
+    px-6
+    py-3
+    rounded-full
+    border
+    border-white/[0.09]
+    bg-white/[0.025]
+    backdrop-blur-xl
+    font-['Space_Grotesk']
+    text-sm
+    text-gray-300
+    hover:border-violet-400/30
+    hover:text-white
+    transition-all
+    duration-300
+  "
           >
-            rk6109744@email.com
+            rk6109744@gmail.com
 
             <span
               className="
-                flex
-                items-center
-                justify-center
-                w-8
-                h-8
-                rounded-full
-                bg-white
-                text-black
-                transition-transform
-                duration-300
-                group-hover:rotate-45
-              "
+      flex
+      items-center
+      justify-center
+      w-8
+      h-8
+      rounded-full
+      bg-white
+      text-black
+      transition-transform
+      duration-300
+      group-hover:rotate-45
+    "
             >
               <FiArrowUpRight size={15} />
             </span>

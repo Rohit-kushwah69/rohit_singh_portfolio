@@ -20,12 +20,12 @@ const socials = [
   },
   {
     name: "LinkedIn",
-    href: "https://www.linkedin.com/",
+    href: "https://www.linkedin.com/in/rohit-kushwah-3512b0301/",
     icon: FiLinkedin,
   },
   {
     name: "Instagram",
-    href: "https://www.instagram.com/",
+    href: "https://www.instagram.com/therohitkushwah___",
     icon: FiInstagram,
   },
 ];
@@ -39,24 +39,81 @@ export default function Contact() {
     message: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
+  const [status, setStatus] = useState({
+    type: "",
+    message: "",
+  });
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+
+    // Remove old status message when user starts typing again
+    if (status.message) {
+      setStatus({
+        type: "",
+        message: "",
+      });
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const subject = encodeURIComponent("Portfolio Contact");
+    setLoading(true);
 
-    const body = encodeURIComponent(
-      `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-    );
+    setStatus({
+      type: "",
+      message: "",
+    });
 
-    window.location.href =
-      `mailto:your@email.com?subject=${subject}&body=${body}`;
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:5000/api/contact",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setStatus({
+          type: "success",
+          message: "Message sent successfully!",
+        });
+
+        setFormData({
+          name: "",
+          email: "",
+          message: "",
+        });
+      } else {
+        setStatus({
+          type: "error",
+          message:
+            data.message || "Unable to send message.",
+        });
+      }
+    } catch (error) {
+      console.error("Contact form error:", error);
+
+      setStatus({
+        type: "error",
+        message:
+          "Unable to connect to server. Please try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -419,15 +476,17 @@ export default function Contact() {
             {/* EMAIL */}
 
             <a
-              href="mailto:your@email.com"
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=rk6109744@gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="
-                group
-                block
-                mt-7
-                pb-7
-                border-b
-                border-white/[0.06]
-              "
+    group
+    block
+    mt-7
+    pb-7
+    border-b
+    border-white/[0.06]
+  "
             >
 
               <div
@@ -491,7 +550,7 @@ export default function Contact() {
                   transition-colors
                 "
               >
-                your@email.com
+                rk6109744@gmail.com
               </p>
 
             </a>
@@ -753,7 +812,7 @@ export default function Contact() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    placeholder="Rohit Singh"
+                    placeholder="Name"
                     className="
                       mt-3
                       w-full
@@ -839,7 +898,7 @@ export default function Contact() {
                     onChange={handleChange}
                     required
                     rows={5}
-                    placeholder="Tell me about your project..."
+                    placeholder="Message"
                     className="
                       mt-3
                       w-full
@@ -861,6 +920,35 @@ export default function Contact() {
 
                 </div>
 
+                {/* STATUS MESSAGE */}
+
+                {status.message && (
+                  <motion.div
+                    initial={{
+                      opacity: 0,
+                      y: 8,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    className={`
+                      rounded-xl
+                      border
+                      px-4
+                      py-3
+                      font-['Space_Grotesk']
+                      text-xs
+                      ${status.type === "success"
+                        ? "border-violet-400/20 bg-violet-400/5 text-violet-300"
+                        : "border-red-400/20 bg-red-400/5 text-red-300"
+                      }
+                    `}
+                  >
+                    {status.message}
+                  </motion.div>
+                )}
+
                 {/* BUTTON */}
 
                 <div
@@ -873,11 +961,12 @@ export default function Contact() {
 
                   <motion.button
                     type="submit"
+                    disabled={loading}
                     whileHover={{
-                      scale: 1.04,
+                      scale: loading ? 1 : 1.04,
                     }}
                     whileTap={{
-                      scale: 0.97,
+                      scale: loading ? 1 : 0.97,
                     }}
                     className="
                       group
@@ -892,10 +981,13 @@ export default function Contact() {
                       font-['Space_Grotesk']
                       text-xs
                       font-semibold
+                      disabled:opacity-50
+                      disabled:cursor-not-allowed
+                      transition-opacity
                     "
                   >
 
-                    Send Message
+                    {loading ? "Sending..." : "Send Message"}
 
                     <span
                       className="

@@ -14,17 +14,17 @@ const socials = [
   },
   {
     name: "LinkedIn",
-    href: "https://www.linkedin.com/",
+    href: "https://www.linkedin.com/in/rohit-kushwah-3512b0301/",
     icon: FiLinkedin,
   },
   {
     name: "Instagram",
-    href: "https://www.instagram.com/",
+    href: "https://www.instagram.com/therohitkushwah___",
     icon: FiInstagram,
   },
   {
     name: "Email",
-    href: "mailto:your@email.com",
+    href: "https://mail.google.com/mail/?view=cm&fs=1&to=rk6109744@gmail.com",
     icon: FiMail,
   },
 ];

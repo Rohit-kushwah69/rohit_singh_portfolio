@@ -10,9 +10,9 @@ import Background from "../ui/Background";
 import profile from "../../assets/image/profile.png";
 
 const stats = [
-  { number: "20+", title: "Projects" },
-  { number: "2+", title: "Years Learning" },
-  { number: "10+", title: "Certificates" },
+  { number: "7+", title: "Projects" },
+  { number: "1+", title: "Years Learning" },
+  { number: "2+", title: "Certificates" },
   { number: "100%", title: "Passion" },
 ];
 
