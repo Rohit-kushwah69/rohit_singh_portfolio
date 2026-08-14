@@ -1,0 +1,2 @@
+cd python-backend
+pip freeze > requirements.txt
