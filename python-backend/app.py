@@ -106,7 +106,7 @@ def contact():
         # ==================================
 
         params = {
-            "from": "onboarding@resend.dev",
+            "from": "Rohit Singh <onboarding@resend.dev>",
             "to": [EMAIL_USER],
             "subject": f"New Portfolio Contact - {name}",
             "reply_to": email,
