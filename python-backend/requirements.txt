@@ -1,2 +1,4 @@
-cd python-backend
-pip freeze > requirements.txt
+Flask
+flask-cors
+python-dotenv
+gunicorn
