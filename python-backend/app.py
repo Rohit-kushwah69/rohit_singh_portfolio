@@ -22,7 +22,15 @@ EMAIL_APP_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
 
 app = Flask(__name__)
 
-CORS(app)
+# Allow frontend / Vercel to access API
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": "*"
+        }
+    }
+)
 
 
 # ==========================================
@@ -53,13 +61,17 @@ def contact():
         email = data.get("email")
         message = data.get("message")
 
-        # Validation
+        # ==================================
+        # VALIDATION
+        # ==================================
+
         if not name or not email or not message:
 
             return jsonify({
                 "success": False,
                 "message": "Name, email and message are required"
             }), 400
+
 
         # ==================================
         # CREATE EMAIL
@@ -74,20 +86,25 @@ def contact():
 
         mail.set_content(
             f"""
-                message from your portfolio.
-                Name: {name}
-                Email: {email}
+New message from your portfolio.
 
-                Message:
-                {message}
-            """
+Name: {name}
+Email: {email}
+
+Message:
+{message}
+"""
         )
+
 
         # ==================================
         # SEND EMAIL
         # ==================================
 
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        with smtplib.SMTP_SSL(
+            "smtp.gmail.com",
+            465
+        ) as smtp:
 
             smtp.login(
                 EMAIL_USER,
@@ -96,13 +113,20 @@ def contact():
 
             smtp.send_message(mail)
 
+
+        # ==================================
+        # SUCCESS
+        # ==================================
+
         return jsonify({
             "success": True,
             "message": "Message sent successfully!"
         }), 200
 
+
     except Exception as error:
 
+        # Keep error only in backend logs
         print("Email Error:", error)
 
         return jsonify({
