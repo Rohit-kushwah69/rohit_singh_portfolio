@@ -1,33 +1,40 @@
 export const projects = [
-    {
-        id: "ghost",
+  {
+    id: "Predict House Prices",
+    title: "House Price Prediction",
+    category: "Machine Learning",
+    year: "2026",
 
-        title: "Ghost Invisibility",
+    short:
+      "Machine learning model that predicts house prices based on property and location features.",
 
-        category: "Computer Vision",
+    description:
+      "House Price Prediction is a machine learning application that predicts house prices using features such as median income, house age, average rooms, population, occupancy, latitude, and longitude. The project uses a trained machine learning model to provide fast and data-driven house price predictions.",
 
-        year: "2026",
-        short:
-            "Real-time AI invisibility using OpenCV and MediaPipe.",
+    // Hero Image
+    image: "/images/Predict House Prices.jpg",
 
-        description:
-            "Ghost is a real-time AI Computer Vision application that removes the user from webcam feed using OpenCV and MediaPipe.",
+    // Project Demo Video
+    video: "/videos/house-price-prediction.mp4",
 
-        // Hero Image
-        image: "/images/ghost.jpg",
+    tech: [
+      "Python",
+      "Pandas",
+      "NumPy",
+      "Matplotlib",
+      "Seaborn",
+      "Scikit-learn",
+      "Linear Regression",
+      "Machine Learning",
+      "Data Preprocessing",
+      "Data Visualization",
+      "Model Evaluation",
+    ],
 
-        // Project Demo Video
-        video: "/videos/ghost.mp4",
+    github:
+      "https://github.com/Rohit-kushwah69/House-Price-Prediction",
 
-        tech: [
-            "Python",
-            "OpenCV",
-            "MediaPipe",
-        ],
-
-        github: "https://github.com/yourusername/Ghost-Invisibility",
-
-        live: "https://your-live-demo.vercel.app",
-    },
-    
+    live:
+      "https://house-price-prediction-alpha-three.vercel.app/",
+  },
 ];
